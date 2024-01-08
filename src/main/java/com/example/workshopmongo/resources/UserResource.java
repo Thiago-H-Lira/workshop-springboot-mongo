@@ -4,7 +4,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.example.workshopmongo.domain.Post;
 import com.example.workshopmongo.domain.User;
 import com.example.workshopmongo.dto.UserDTO;
-import com.example.workshopmongo.repository.UserRepository;
 import com.example.workshopmongo.services.UserService;
 
 @RestController
@@ -30,8 +29,6 @@ public class UserResource {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private UserRepository userRepository;
 	
 	@GetMapping
 	public ResponseEntity<List<UserDTO>> findAll(){
@@ -47,6 +44,14 @@ public class UserResource {
 		
 		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
+	
+	@GetMapping(value = "/{id}/posts")
+	public ResponseEntity<List<Post>> findPosts(@PathVariable String id){
+		User obj = userService.findById(id);
+		
+		return ResponseEntity.ok().body(obj.getPosts());
+	}
+	
 	
 	@PostMapping
 	public ResponseEntity<Void> insert (@RequestBody UserDTO objDTO){
